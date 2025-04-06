@@ -53,7 +53,10 @@ class YFinanceHistoricalTool(BaseTool):
         try:
             stock = yf.Ticker(symbol)
             start_date = f"{start_year}-01-01"
-            end_date = f"{end_year}-04-01"
+            if end_year < 2025:
+                end_date = f"{end_year}-12-31"
+            else:
+                end_date = f"{end_year}-04-01"
             hist = stock.history(start=start_date, end=end_date)
             if hist.empty:
                 return f"No historical data found for {symbol} from {start_year} to {end_year}."
@@ -105,7 +108,7 @@ report_agent = Agent(
 )
 
 # Streamlit App
-st.set_page_config(page_title="FinBOT Research Tool", page_icon="🤖")  # Updated to suggested project name
+st.set_page_config(page_title="FinBOT Research Tool", page_icon="🤖")
 st.title("FinBOT Research Tool🤖")
 
 # Create proposals directory if it doesn’t exist
@@ -164,7 +167,7 @@ if st.button("Generate Proposal"):
     if company_name and stock_symbol:
         with st.spinner("Generating proposal..."):
             try:
-                # Define research task with enhanced prompt
+                # Define research task 
                 research_description = (
                     f"Conduct a comprehensive research on {company_name} (stock symbol: {stock_symbol}) for the period from {start_year} to {end_year}. "
                     "Utilize the YFinanceHistoricalTool to retrieve historical stock data, including opening and closing prices, volume, and any significant fluctuations. "
@@ -178,7 +181,7 @@ if st.button("Generate Proposal"):
                     agent=research_agent
                 )
 
-                # Define analysis task with enhanced prompt
+                # Define analysis task 
                 use_case_description = (
                     f"Analyze the collected data for {company_name} from {start_year} to {end_year}. "
                     "For the stock performance, calculate the overall percentage change, identify any significant spikes or drops, and determine the general trend (e.g., bullish, bearish, volatile). "
@@ -192,7 +195,7 @@ if st.button("Generate Proposal"):
                     agent=use_case_agent
                 )
 
-                # Define report task with enhanced prompt
+                # Define report task 
                 report_description = (
                     f"Compile a comprehensive report for {company_name} covering {start_year} to {end_year}. "
                     "Structure the report with numbered sections:\n"
@@ -213,18 +216,18 @@ if st.button("Generate Proposal"):
                 research_output = research_task.execute_sync(agent=research_agent)
 
                 st.write(f"Agent: {use_case_agent.role} is analyzing the data.")
-                use_case_output = use_case_task.execute_sync(agent=use_case_agent, context=research_output)
+                use_case_output = use_case_task.execute_sync(agent=use_case_agent, context=research_output.raw)
 
                 st.write(f"Agent: {report_agent.role} is compiling the final report.")
-                report_output = report_task.execute_sync(agent=report_agent, context=[research_output, use_case_output])
+                report_output = report_task.execute_sync(agent=report_agent, context=[research_output.raw, use_case_output.raw])
 
                 # Get the final report text
-                report_text = report_output.raw  # Adjust based on actual CrewAI output attribute
+                report_text = report_output.raw  
 
-                # Sanitize the report text to prevent encoding errors
+                # Sanitize the report text 
                 sanitized_report_text = sanitize_text(report_text)
 
-                # Generate PDF with improved formatting
+                # Generate PDF 
                 pdf = FPDF()
                 pdf.add_page()
 
@@ -243,7 +246,7 @@ if st.button("Generate Proposal"):
                 for section in sections:
                     if ':' in section:
                         title, content = section.split(':', 1)
-                        title = title.strip().replace('**', '').lstrip('- ').strip()  # Clean markdown
+                        title = title.strip().replace('**', '').lstrip('- ').strip()  
                         numbered_title = f"{section_number}. {title}"
                         
                         # Heading
@@ -254,11 +257,11 @@ if st.button("Generate Proposal"):
                         pdf.set_font("Helvetica", size=12)
                         pdf.multi_cell(0, 10, txt=content.strip())
                         
-                        # Add chart placeholder (example)
+                        # Add chart placeholder 
                         if "Stock Performance" in title:
                             pdf.ln(5)
                             pdf.set_font("Helvetica", 'I', 12)
-                            pdf.cell(0, 10, txt="[Insert Stock Performance Chart Here]", ln=1)
+                            pdf.cell(0, 10, txt="[Insert Stock Performance Chart Sanctions Here]", ln=1)
                         
                         pdf.ln(10)
                         section_number += 1
