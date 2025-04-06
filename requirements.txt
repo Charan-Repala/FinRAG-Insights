@@ -1,0 +1,17 @@
+google-generativeai
+streamlit
+joblib
+python-dotenv
+crewai
+crewai-tools
+firecrawl-py
+qdrant-client
+sentence-transformers
+markitdown
+chonkie
+numpy
+ipython
+notebook
+black
+pylint
+fpdf
