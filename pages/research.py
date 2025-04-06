@@ -53,18 +53,23 @@ class YFinanceHistoricalTool(BaseTool):
         try:
             stock = yf.Ticker(symbol)
             start_date = f"{start_year}-01-01"
-            if end_year < 2025:
+            current_year = datetime.date.today().year
+
+            if end_year < current_year:
                 end_date = f"{end_year}-12-31"
             else:
-                end_date = f"{end_year}-04-01"
+                end_date = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+
             hist = stock.history(start=start_date, end=end_date)
             if hist.empty:
                 return f"No historical data found for {symbol} from {start_year} to {end_year}."
+            
             first_close = hist['Close'].iloc[0]
             last_close = hist['Close'].iloc[-1]
             percent_change = (last_close - first_close) / first_close * 100
             max_close = hist['Close'].max()
             min_close = hist['Close'].min()
+            
             summary = (
                 f"Stock: {symbol}\n"
                 f"Period: {start_year} to {end_year}\n"
@@ -214,12 +219,14 @@ if st.button("Generate Proposal"):
                 # Execute tasks
                 st.write(f"Agent: {research_agent.role} is gathering data on {company_name}.")
                 research_output = research_task.execute_sync(agent=research_agent)
-
+                
                 st.write(f"Agent: {use_case_agent.role} is analyzing the data.")
                 use_case_output = use_case_task.execute_sync(agent=use_case_agent, context=research_output.raw)
-
+                
                 st.write(f"Agent: {report_agent.role} is compiling the final report.")
-                report_output = report_task.execute_sync(agent=report_agent, context=[research_output.raw, use_case_output.raw])
+                # Concatenate outputs into a single string for context
+                context_for_report = research_output.raw + '\n\n' + use_case_output.raw
+                report_output = report_task.execute_sync(agent=report_agent, context=context_for_report)
 
                 # Get the final report text
                 report_text = report_output.raw  
