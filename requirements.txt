@@ -15,3 +15,7 @@ notebook
 black
 pylint
 fpdf
+chromadb[full]
+pysqlite3-binary
+databricks-sdk
+yfinance
