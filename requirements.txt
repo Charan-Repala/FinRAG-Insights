@@ -4,6 +4,7 @@ joblib
 python-dotenv
 crewai
 crewai-tools
+crewai[tools]
 firecrawl-py
 qdrant-client
 sentence-transformers
