@@ -20,3 +20,4 @@ chromadb[full]
 pysqlite3-binary
 databricks-sdk
 yfinance
+boto3
