@@ -113,8 +113,8 @@ report_agent = Agent(
 )
 
 # Streamlit App
-st.set_page_config(page_title="FinBOT Research Tool", page_icon="🤖")
-st.title("FinBOT Research Tool🤖")
+st.set_page_config(page_title="FinRAG-Insights Research Tool", page_icon="🤖")
+st.title("FinRAG-Insights Research Tool🤖")
 
 # Create proposals directory if it doesn’t exist
 if not os.path.exists("proposals"):
