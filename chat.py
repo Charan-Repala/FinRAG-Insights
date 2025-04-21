@@ -173,7 +173,7 @@ def display_pdf(file_path=None):
         st.markdown(pdf_display, unsafe_allow_html=True)
 
 # Streamlit App
-st.set_page_config(page_title="FinBOT", page_icon="🤖")
+st.set_page_config(page_title="FinRAG-Insights", page_icon="🤖")
 
 # Sidebar
 with st.sidebar:
@@ -310,7 +310,7 @@ with st.sidebar:
 
 # Main Chat Interface
 if 'chat_id' not in st.session_state:
-    st.write("# FinBOT 🤖")
+    st.write("# FinRAG-Insights 🤖")
     st.write("Start a new chat from the sidebar to begin.")
 else:
     st.write(f"# {st.session_state.chat_title}")    
